@@ -1,0 +1,157 @@
+<html>
+<head>
+	<style>
+		#holder{
+			position:relative;
+			width:100%;
+			height:100%;
+			float:left;
+			margin:0;
+			padding:0;
+		}
+		.chart{
+			position:absolute;
+			background-color:green;
+			border:1px solid green;
+			border-top-left-radius:999px;
+			border-top-right-radius:999px;
+			width:30px;
+			margin:0;
+			text-align:center;
+			bottom:0px;
+		}
+	</style>
+</head>
+<body>
+	<div id="holder"></div>
+<script>
+	var count=0;
+	var array=[];
+	var mainInterval1=null;
+	function init(n){
+		for(var i=0;i<n;i++)
+			setCharts();
+        window.setTimeout(setArrayForBubbleSort(),1000);
+        window.setTimeout(bubbleSort(),1500);
+	}
+	function setCharts(){
+		new chart(count);
+		count++;
+	}
+	chart = function(count){
+		this.id = "chart" + count;
+		this.left = 10 + count * 40;
+		this.color = get_random_color();
+		this.value = Math.floor(Math.random()*94)+5;
+		//alert(this.id);
+		add(this.id,this.left,this.color);
+		animate(this.id,this.value);
+	}
+	function add(id,left,color,value){
+		var tempDiv=document.createElement("div");
+		tempDiv.className = "chart";
+		tempDiv.id = id;
+		tempDiv.style.background = color;
+		tempDiv.style.borderColor = color;
+		tempDiv.style.left = left;
+		document.getElementById("holder").appendChild(tempDiv);
+	}
+	function animate(id,value){
+		var tempDiv = document.getElementById(id);
+		tempDiv.setAttribute("value",value);
+		var tempHeight=2;
+		var tempInterval=window.setInterval(function(){
+			tempDiv.style.height=tempHeight + "%";
+			tempHeight++;
+			if(tempHeight == value)window.clearInterval(tempInterval);
+		},10);
+	}
+	function get_random_color() {
+		var letters = '0123456789ABCDEF'.split('');
+		var color = '#';
+		for (var i = 0; i < 6; i++ ) {
+			color += letters[Math.round(Math.random() * 15)];
+		}
+		return color;
+	}
+	function arraysEqual(arr1, arr2) {
+		if(arr1.length !== arr2.length)
+			return false;
+		for(var i = arr1.length; i--;) {
+			if(arr1[i] !== arr2[i])
+				return false;
+		}
+
+		return true;
+	}
+	function setArrayForBubbleSort(){
+		var divArray=document.getElementsByClassName("chart");
+		for(var i = 0;i < divArray.length; i++)
+			array.push(parseInt(divArray[i].getAttribute("value")));
+	}
+	function bubbleSort(){
+		var a=array;
+		var size = a.length;
+		var mainCount=0;
+		//for(var j=0;j < size - 1;j++)
+			//for(var i = 0;i < size - 1;i++){
+		mainInterval1=window.setInterval(function(){
+			var i=0;
+			mainCount++;
+			var mainInterval2=window.setInterval(function(){
+				if(a[i] > a[i+1]){
+					a[i+1]+= a[i];
+					a[i] = a[i+1] - a[i];
+					a[i+1]-= a[i];
+					swap(i);
+				}
+				else{
+					notSwap(i);
+				}
+				if(i != size - 2)i++;
+				else window.clearInterval(mainInterval2)
+				if(mainCount==size-1){
+					window.clearInterval(mainInterval1);
+					console.log("Done");
+					}
+			},200);
+		},200*size-1);
+			//}
+	}
+	function swap(id){
+		var obj1=document.getElementById("chart"+id);
+		var obj2=document.getElementById("chart"+(id+1));
+		obj1.setAttribute("id","chart"+(id+1));
+		obj2.setAttribute("id","chart"+id);
+		var offset=2;
+		var counter=0;
+		var tempAnimInterval = window.setInterval(function(){
+			obj1.style.left = (parseInt(obj1.style.left) + offset) + "px";
+			obj2.style.left = (parseInt(obj2.style.left) - offset) + "px";
+			counter++;
+			if(counter == 20)window.clearInterval(tempAnimInterval);
+		},10);
+	}
+	function notSwap(id){
+		var obj1=document.getElementById("chart"+id);
+		var obj2=document.getElementById("chart"+(id+1));
+		var offset=1;
+		var counter=0;
+		var tempAnimInterval = window.setInterval(function(){
+			obj1.style.left = (parseInt(obj1.style.left) + offset) + "px";
+			obj2.style.left = (parseInt(obj2.style.left) - offset) + "px";
+			counter++;
+			if(counter == 5)offset=-1;
+			if(counter == 10)window.clearInterval(tempAnimInterval);
+		},20);
+	}
+	
+	var n = prompt("Number of array elements(3-30)", "25");
+	n = parseInt(n);
+	if (n > 2  && n < 30)
+		init(n);
+	else
+		init(15);
+</script>
+</body>
+</html>
